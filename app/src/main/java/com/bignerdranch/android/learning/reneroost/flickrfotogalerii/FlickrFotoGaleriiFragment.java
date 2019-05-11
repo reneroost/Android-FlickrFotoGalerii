@@ -9,15 +9,21 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.view.View.GONE;
 
 public class FlickrFotoGaleriiFragment extends Fragment {
 
@@ -35,7 +41,8 @@ public class FlickrFotoGaleriiFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        new TombaUksusUlesanne().execute();
+        setHasOptionsMenu(true);
+        uuendaUksusi();
 
         Handler vastuseKasitleja = new Handler();
         mPisipildiTombaja = new PisipildiTombaja<>(vastuseKasitleja);
@@ -80,6 +87,59 @@ public class FlickrFotoGaleriiFragment extends Fragment {
         Log.w(SILT, "Taustalõim hävitatud.");
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menuu, MenuInflater menuuTaispuhuja) {
+        super.onCreateOptionsMenu(menuu, menuuTaispuhuja);
+        menuuTaispuhuja.inflate(R.menu.fragment_foto_galerii, menuu);
+
+        MenuItem otsinguUksus = menuu.findItem(R.id.menuu_uksus_otsing);
+        final SearchView otsinguVaade = (SearchView) otsinguUksus.getActionView();
+
+        otsinguVaade.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String paring) {
+                Log.w(SILT, "QueryTextSubmit: " + paring);
+                ParinguEelistused.maaraHoiulOlevParing(getActivity(), paring);
+                otsinguVaade.setVisibility(GONE);
+                uuendaUksusi();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String paring) {
+                Log.d(SILT, "QueryTextChange: " + paring);
+                return false;
+            }
+        });
+
+        otsinguVaade.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View vaade) {
+                String paring = ParinguEelistused.saaHoiulOlevParing(getActivity());
+                otsinguVaade.setQuery(paring, false);
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem uksus) {
+        switch (uksus.getItemId()) {
+            case R.id.menuu_uksus_puhasta:
+                ParinguEelistused.maaraHoiulOlevParing(getActivity(), null);
+                uuendaUksusi();
+                return true;
+            default:
+                return super.onOptionsItemSelected(uksus);
+        }
+    }
+
+
+    private void uuendaUksusi() {
+        String paring = ParinguEelistused.saaHoiulOlevParing(getActivity());
+        new TombaUksusUlesanne(paring).execute();
+    }
+
+
     private void seadistusAdapter() {
         if (isAdded()) {
             mFotoTaaskasutusVaade.setAdapter(new FotoAdapter(mUksused));
@@ -117,7 +177,7 @@ public class FlickrFotoGaleriiFragment extends Fragment {
         @Override
         public void onBindViewHolder(FotoHoidja fotoHoidja, int positioon) {
             GaleriiUksus galeriiUksus = mGaleriiUksused.get(positioon);
-            Drawable kohahoidja = getResources().getDrawable(R.drawable.bill_up_close);
+            Drawable kohahoidja = getResources().getDrawable(R.drawable.allalaadmine);
             fotoHoidja.seoJoonistatav(kohahoidja);
             mPisipildiTombaja.pisipildiJarjekord(fotoHoidja, galeriiUksus.saaUrl());
         }
@@ -129,9 +189,20 @@ public class FlickrFotoGaleriiFragment extends Fragment {
     }
 
     private class TombaUksusUlesanne extends AsyncTask<Void, Void, List<GaleriiUksus>> {
+
+        private String mParing;
+
+        public TombaUksusUlesanne(String paring) {
+             this.mParing = paring;
+        }
+
         @Override
         protected List<GaleriiUksus> doInBackground(Void... params) {
-            return new FlickristTombaja().tombaUksusi();
+            if (mParing == null) {
+                return new FlickristTombaja().tombaHiljutiFotosid();
+            } else {
+                return new FlickristTombaja().otsiFotosid(mParing);
+            }
         }
 
         @Override

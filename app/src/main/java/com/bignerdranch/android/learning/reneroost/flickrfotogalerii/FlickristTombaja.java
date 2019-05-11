@@ -18,7 +18,19 @@ import java.util.List;
 public class FlickristTombaja {
 
     private static final String SILT = "FlickristTombaja";
+
     private static final String API_VOTI = "eb37579ca442b52ba27206ed9d582a59";
+    private static final String TOMBA_HILJUTI_MEETOD = "flickr.photos.getRecent";
+    private static final String OTSI_MEETOD = "flickr.photos.search";
+    private static final Uri LOPPPUNKT = Uri
+            .parse("https://api.flickr.com/services/rest")
+            .buildUpon()
+            .appendQueryParameter("api_key", API_VOTI)
+            .appendQueryParameter("format", "json")
+            .appendQueryParameter("nojsoncallback", "1")
+            .appendQueryParameter("extras", "url_s")
+            .build();
+
 
     public byte[] saaUrlBaidid(String urlAadress) throws IOException {
         URL url = new URL(urlAadress);
@@ -44,23 +56,27 @@ public class FlickristTombaja {
         }
     }
 
+
     public String saaUrlString(String urlAadress) throws IOException {
         return new String(saaUrlBaidid(urlAadress));
     }
 
-    public List<GaleriiUksus> tombaUksusi() {
+    public List<GaleriiUksus> tombaHiljutiFotosid() {
+        String url = looUrl(TOMBA_HILJUTI_MEETOD, null);
+        return laadiAllaGaleriiUksusi(url);
+    }
+
+    public List<GaleriiUksus> otsiFotosid(String paring) {
+        String url = looUrl(OTSI_MEETOD, paring);
+        return laadiAllaGaleriiUksusi(url);
+    }
+
+
+    private List<GaleriiUksus> laadiAllaGaleriiUksusi(String url) {
 
         List<GaleriiUksus> galeriiUksused = new ArrayList<>();
 
         try {
-            String url = Uri.parse("https://api.flickr.com/services/rest/")
-                    .buildUpon()
-                    .appendQueryParameter("method", "flickr.photos.getRecent")
-                    .appendQueryParameter("api_key", API_VOTI)
-                    .appendQueryParameter("format", "json")
-                    .appendQueryParameter("nojsoncallback", "1")
-                    .appendQueryParameter("extras", "url_s")
-                    .build().toString();
             String jsonString = saaUrlString(url);
             Log.w(SILT, "Sain JSONi: " + jsonString);
             JSONObject jsonKeha = new JSONObject(jsonString);
@@ -72,6 +88,19 @@ public class FlickristTombaja {
         }
         return galeriiUksused;
     }
+
+
+    private String looUrl(String meetod, String paring) {
+        Uri.Builder uriEhitaja = LOPPPUNKT.buildUpon()
+                .appendQueryParameter("method", meetod);
+
+        if (meetod.equals(OTSI_MEETOD)) {
+            uriEhitaja.appendQueryParameter("text", paring);
+        }
+
+        return uriEhitaja.build().toString();
+    }
+
 
     private void parsiUksusi(List<GaleriiUksus> galeriiUksused, JSONObject jsonKeha) throws IOException, JSONException {
 
