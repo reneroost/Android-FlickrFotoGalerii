@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +42,7 @@ public class FlickrFotoGaleriiFragment extends Fragment {
         setHasOptionsMenu(true);
         uuendaUksusi();
 
+
         Handler vastuseKasitleja = new Handler();
         mPisipildiTombaja = new PisipildiTombaja<>(vastuseKasitleja);
         mPisipildiTombaja.maaraPisipildiTombajaKuular(
@@ -58,7 +57,7 @@ public class FlickrFotoGaleriiFragment extends Fragment {
 
         mPisipildiTombaja.start();
         mPisipildiTombaja.getLooper();
-        Log.w(SILT, "Taustalõim alustatud.");
+        // Log.w(SILT, "Taustalõim alustatud.");
     }
 
     @Override
@@ -84,7 +83,7 @@ public class FlickrFotoGaleriiFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mPisipildiTombaja.quit();
-        Log.w(SILT, "Taustalõim hävitatud.");
+        // Log.w(SILT, "Taustalõim hävitatud.");
     }
 
     @Override
@@ -98,7 +97,7 @@ public class FlickrFotoGaleriiFragment extends Fragment {
         otsinguVaade.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String paring) {
-                Log.w(SILT, "QueryTextSubmit: " + paring);
+                // Log.w(SILT, "QueryTextSubmit: " + paring);
                 ParinguEelistused.maaraHoiulOlevParing(getActivity(), paring);
                 otsinguVaade.setVisibility(GONE);
                 uuendaUksusi();
@@ -107,7 +106,7 @@ public class FlickrFotoGaleriiFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String paring) {
-                Log.d(SILT, "QueryTextChange: " + paring);
+                // Log.d(SILT, "QueryTextChange: " + paring);
                 return false;
             }
         });
@@ -119,6 +118,13 @@ public class FlickrFotoGaleriiFragment extends Fragment {
                 otsinguVaade.setQuery(paring, false);
             }
         });
+
+        MenuItem lulitaUksus = menuu.findItem(R.id.menuu_uksus_lulita_pollimist);
+        if (PollimiseTeenus.onTeenuseAlarmSees(getActivity())) {
+            lulitaUksus.setTitle(R.string.peata_pollimine);
+        } else {
+            lulitaUksus.setTitle(R.string.alusta_pollimist);
+        }
     }
 
     @Override
@@ -127,6 +133,11 @@ public class FlickrFotoGaleriiFragment extends Fragment {
             case R.id.menuu_uksus_puhasta:
                 ParinguEelistused.maaraHoiulOlevParing(getActivity(), null);
                 uuendaUksusi();
+                return true;
+            case R.id.menuu_uksus_lulita_pollimist:
+                boolean peaksAlarmiKaivitama = !PollimiseTeenus.onTeenuseAlarmSees(getActivity());
+                PollimiseTeenus.maaraTeenuseAlarm(getActivity(), peaksAlarmiKaivitama);
+                getActivity().invalidateOptionsMenu();
                 return true;
             default:
                 return super.onOptionsItemSelected(uksus);

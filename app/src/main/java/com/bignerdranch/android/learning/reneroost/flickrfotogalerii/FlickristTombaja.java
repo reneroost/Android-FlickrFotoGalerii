@@ -78,13 +78,13 @@ public class FlickristTombaja {
 
         try {
             String jsonString = saaUrlString(url);
-            Log.w(SILT, "Sain JSONi: " + jsonString);
+            // Log.w(SILT, "Sain JSONi: " + jsonString);
             JSONObject jsonKeha = new JSONObject(jsonString);
             parsiUksusi(galeriiUksused, jsonKeha);
         } catch (IOException ioe) {
-            Log.e(SILT, "Ei õnnestunud uksusi tommata. " + ioe);
+            // Log.e(SILT, "Ei õnnestunud uksusi tommata. " + ioe);
         } catch (JSONException je) {
-            Log.e(SILT, "Ei onnestunud JSONi parserdada. " + je);
+            // Log.e(SILT, "Ei onnestunud JSONi parserdada. " + je);
         }
         return galeriiUksused;
     }

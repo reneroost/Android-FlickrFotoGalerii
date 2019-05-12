@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 public class ParinguEelistused {
 
     private static final String EELISTUS_OTSINGU_PARING = "otsinguParing";
+    private static final String EELISTUS_VIIMASE_TULEMUSE_ID = "viimaseTulemuseId";
 
     public static String saaHoiulOlevParing(Context kontekst) {
         return PreferenceManager.getDefaultSharedPreferences(kontekst)
@@ -19,4 +20,15 @@ public class ParinguEelistused {
                 .apply();
     }
 
+    public static String saaViimaseTulemuseId(Context kontekst) {
+        return PreferenceManager.getDefaultSharedPreferences(kontekst)
+                .getString(EELISTUS_VIIMASE_TULEMUSE_ID, null);
+    }
+
+    public static void maaraViimaseTulemuseId(Context kontekst, String viimaseTulemuseId) {
+        PreferenceManager.getDefaultSharedPreferences(kontekst)
+                .edit()
+                .putString(EELISTUS_VIIMASE_TULEMUSE_ID, viimaseTulemuseId)
+                .apply();
+    }
 }

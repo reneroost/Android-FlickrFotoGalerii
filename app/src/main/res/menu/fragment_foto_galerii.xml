@@ -13,4 +13,9 @@
         android:id="@+id/menuu_uksus_puhasta"
         android:title="@string/puhasta_otsing"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menuu_uksus_lulita_pollimist"
+        android:title="@string/alusta_pollimist"
+        app:showAsAction="ifRoom"/>
 </menu>

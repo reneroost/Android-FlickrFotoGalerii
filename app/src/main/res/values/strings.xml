@@ -3,4 +3,9 @@
 
     <string name="otsing">Otsi</string>
     <string name="puhasta_otsing">Puhasta otsing</string>
+
+    <string name="alusta_pollimist">Alusta pollimist</string>
+    <string name="peata_pollimine">Peata pollimine</string>
+    <string name="uued_pildid_pealkiri">Uued FlickrFotoGalerii pildid</string>
+    <string name="uued_pildid_tekst">Teie galeriis on uued pildid.</string>
 </resources>

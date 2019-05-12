@@ -42,7 +42,7 @@ public class PisipildiTombaja<T> extends HandlerThread {
             public void handleMessage(Message sonum) {
                 if (sonum.what == SONUMI_ALLALAADIMINE) {
                     T siht = (T) sonum.obj;
-                    Log.w(SILT, "Sain URLi taotluse: " + mTaotluseMap.get(siht));
+                    // Log.w(SILT, "Sain URLi taotluse: " + mTaotluseMap.get(siht));
                     kasitleTaotlust(siht);
                 }
             }
@@ -56,7 +56,7 @@ public class PisipildiTombaja<T> extends HandlerThread {
     }
 
     public void pisipildiJarjekord(T siht, String url) {
-        Log.w(SILT, "Sain URLi: " + url);
+        // Log.w(SILT, "Sain URLi: " + url);
 
         if (url == null) {
             mTaotluseMap.remove(siht);
@@ -81,7 +81,7 @@ public class PisipildiTombaja<T> extends HandlerThread {
 
             byte[] rasteriBaidid = new FlickristTombaja().saaUrlBaidid(url);
             final Bitmap raster = BitmapFactory.decodeByteArray(rasteriBaidid, 0, rasteriBaidid.length);
-            Log.w(SILT, "Raster loodud");
+            // Log.w(SILT, "Raster loodud");
 
             mVastuseKasitleja.post(new Runnable() {
                 @Override
@@ -95,7 +95,7 @@ public class PisipildiTombaja<T> extends HandlerThread {
             });
 
         } catch (IOException ioe) {
-            Log.w(SILT, "Viga pildi allalaadimisel", ioe);
+            // Log.w(SILT, "Viga pildi allalaadimisel", ioe);
         }
     }
 }
