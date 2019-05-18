@@ -1,5 +1,6 @@
 package com.bignerdranch.android.learning.reneroost.flickrfotogalerii;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
@@ -24,6 +25,12 @@ public class PollimiseTeenus extends IntentService {
     // Maarab intervalli 1 minut
     private static final long POLLIMISE_INTERVALL_MS = TimeUnit.MINUTES.toMillis(1);
 
+    public static final String TEGEVUS_NAITA_TEADET = "com.bignerdranch.android.learning.reneroost.flickrfotogalerii.NAITA_TEADET";
+    public static final String LUBA_PRIVAATNE = "com.bignerdranch.android.learning.reneroost.fotogalerii.PRIVATE";
+    public static final String KUTSUNGI_KOOD = "KUTSUNGI_KOOD";
+    public static final String TEADE = "TEADE";
+
+
     public static Intent uusKavatsus(Context kontekst) {
         return new Intent(kontekst, PollimiseTeenus.class);
     }
@@ -40,6 +47,7 @@ public class PollimiseTeenus extends IntentService {
             alarmiHaldur.cancel(pKavatsus);
             pKavatsus.cancel();
         }
+        ParinguEelistused.lulitaAlarmSisse(kontekst, onSees);
     }
 
     public static boolean onTeenuseAlarmSees(Context kontekst) {
@@ -92,11 +100,18 @@ public class PollimiseTeenus extends IntentService {
                     .setAutoCancel(true)
                     .build();
 
-            NotificationManagerCompat teateHaldur = NotificationManagerCompat.from(this);
-            teateHaldur.notify(0, teade);
+            naitaTaustaTeadet(0, teade);
         }
 
         ParinguEelistused.maaraViimaseTulemuseId(this, tulemuseId);
+    }
+
+    private void naitaTaustaTeadet(int kutsungiKood, Notification teade) {
+        Intent kavatsus = new Intent(TEGEVUS_NAITA_TEADET);
+        kavatsus.putExtra(KUTSUNGI_KOOD, kutsungiKood);
+        kavatsus.putExtra(TEADE, teade);
+        sendOrderedBroadcast(kavatsus, LUBA_PRIVAATNE, null, null,
+        Activity.RESULT_OK, null, null);
     }
 
     private boolean onInternetSaadavalJaUhendatud() {

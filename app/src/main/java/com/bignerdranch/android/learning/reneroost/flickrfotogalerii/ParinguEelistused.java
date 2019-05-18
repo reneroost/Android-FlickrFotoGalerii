@@ -7,6 +7,7 @@ public class ParinguEelistused {
 
     private static final String EELISTUS_OTSINGU_PARING = "otsinguParing";
     private static final String EELISTUS_VIIMASE_TULEMUSE_ID = "viimaseTulemuseId";
+    private static final String EELISTUS_ON_ALARM_SEES = "onAlarmSees";
 
     public static String saaHoiulOlevParing(Context kontekst) {
         return PreferenceManager.getDefaultSharedPreferences(kontekst)
@@ -29,6 +30,18 @@ public class ParinguEelistused {
         PreferenceManager.getDefaultSharedPreferences(kontekst)
                 .edit()
                 .putString(EELISTUS_VIIMASE_TULEMUSE_ID, viimaseTulemuseId)
+                .apply();
+    }
+
+    public static boolean onAlarmSees(Context kontekst) {
+        return PreferenceManager.getDefaultSharedPreferences(kontekst)
+                .getBoolean(EELISTUS_ON_ALARM_SEES, false);
+    }
+
+    public static void lulitaAlarmSisse(Context kontekst, boolean onSees) {
+        PreferenceManager.getDefaultSharedPreferences(kontekst)
+                .edit()
+                .putBoolean(EELISTUS_ON_ALARM_SEES, onSees)
                 .apply();
     }
 }

@@ -1,5 +1,6 @@
 package com.bignerdranch.android.learning.reneroost.flickrfotogalerii;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -23,7 +24,7 @@ import java.util.List;
 
 import static android.view.View.GONE;
 
-public class FlickrFotoGaleriiFragment extends Fragment {
+public class FlickrFotoGaleriiFragment extends NahtavFragment {
 
     private static final String SILT = "FlickrFotoGaleriiFrag";
 
@@ -157,17 +158,29 @@ public class FlickrFotoGaleriiFragment extends Fragment {
         }
     }
 
-    class FotoHoidja extends RecyclerView.ViewHolder {
+    class FotoHoidja extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView mUksusPildiVaade;
+        private GaleriiUksus mGaleriiUksus;
 
         public FotoHoidja(View uksuseVaade) {
             super(uksuseVaade);
 
             mUksusPildiVaade = (ImageView) uksuseVaade.findViewById(R.id.uksus_pildi_vaade);
+            uksuseVaade.setOnClickListener(this);
         }
 
         public void seoJoonistatav(Drawable joonistatav) {
             mUksusPildiVaade.setImageDrawable(joonistatav);
+        }
+
+        public void seoGaleriiUksus(GaleriiUksus galeriiUksus) {
+            mGaleriiUksus = galeriiUksus;
+        }
+
+        @Override
+        public void onClick(View vaade) {
+            Intent kavatsus = FotoLehtActivity.uusKavatsus(getActivity(), mGaleriiUksus.saaFotoLeheUri());
+            startActivity(kavatsus);
         }
     }
 
@@ -188,6 +201,7 @@ public class FlickrFotoGaleriiFragment extends Fragment {
         @Override
         public void onBindViewHolder(FotoHoidja fotoHoidja, int positioon) {
             GaleriiUksus galeriiUksus = mGaleriiUksused.get(positioon);
+            fotoHoidja.seoGaleriiUksus(galeriiUksus);
             Drawable kohahoidja = getResources().getDrawable(R.drawable.allalaadmine);
             fotoHoidja.seoJoonistatav(kohahoidja);
             mPisipildiTombaja.pisipildiJarjekord(fotoHoidja, galeriiUksus.saaUrl());

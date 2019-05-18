@@ -119,6 +119,7 @@ public class FlickristTombaja {
             }
 
             galeriiUksus.maaraUrl(fotoJsonObjekt.getString("url_s"));
+            galeriiUksus.maaraOmanik(fotoJsonObjekt.getString("owner"));
             galeriiUksused.add(galeriiUksus);
         }
     }
